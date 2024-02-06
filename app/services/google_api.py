@@ -2,7 +2,7 @@ from aiogoogle import Aiogoogle
 from datetime import datetime
 
 from app.core.config import settings
-from app.models import CharityProject
+from app.models.charity_project import CharityProject
 
 
 FORMAT = "%Y/%m/%d %H:%M:%S"

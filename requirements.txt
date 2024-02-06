@@ -80,4 +80,3 @@ uvloop==0.16.0
 watchgod==0.8.2
 websockets==10.3
 yarl==1.7.2; python_version >= '3.6'
-

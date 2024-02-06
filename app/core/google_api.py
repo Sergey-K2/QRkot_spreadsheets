@@ -21,9 +21,9 @@ INFO = {
     'universe_domain': settings.universe_domain
 }
 
+credentials = ServiceAccountCreds(scopes=SCOPES, **INFO)
+
 
 async def get_service():
     async with Aiogoogle(service_account_creds=credentials) as aiogoogle:
         yield aiogoogle
-
-credentials = ServiceAccountCreds(scopes=SCOPES, **INFO)
