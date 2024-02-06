@@ -1,27 +1,9 @@
 from aiogoogle import Aiogoogle
-from aiogoogle.auth.creds import ServiceAccountCreds
 from datetime import datetime
 
 from app.core.config import settings
 from app.models import CharityProject
 
-SCOPES = [
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/drive'
-]
-INFO = {
-    'type': settings.type,
-    'project_id': settings.project_id,
-    'private_key_id': settings.private_key_id,
-    'private_key': settings.private_key,
-    'client_email': settings.client_email,
-    'client_id': settings.client_id,
-    'auth_uri': settings.auth_uri,
-    'token_uri': settings.token_uri,
-    'auth_provider_x509_cert_url': settings.auth_provider_x509_cert_url,
-    'client_x509_cert_url': settings.client_x509_cert_url,
-    'universe_domain': settings.universe_domain
-}
 
 FORMAT = "%Y/%m/%d %H:%M:%S"
 SPREADSHEET_ROWCOUNT = 100
@@ -52,13 +34,6 @@ ROW_COLUMN_COUNT_LIMIT_ERROR = ('Количество строк - {rows_value},
                                 'количество строк не'
                                 'должно превышать {rowcount_limit}, '
                                 'a столбцов - {columncount_limit}')
-
-credentials = ServiceAccountCreds(scopes=SCOPES, **INFO)
-
-
-async def get_service():
-    async with Aiogoogle(service_account_creds=credentials) as aiogoogle:
-        yield aiogoogle
 
 
 async def spreadsheets_create(aiogoogle: Aiogoogle) -> str:
