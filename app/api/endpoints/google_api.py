@@ -12,8 +12,6 @@ from app.services.google_api import (set_user_permissions,
 
 router = APIRouter()
 
-GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/'
-
 
 @router.post(
     '/',
@@ -28,5 +26,8 @@ async def get_spreadsheet_report(
     )
     spreadsheet_id = await spreadsheets_create(aiogoogle)
     await set_user_permissions(spreadsheet_id, aiogoogle)
-    await spreadsheets_update_value(spreadsheet_id, projects, aiogoogle)
-    return GOOGLE_SHEETS_URL + spreadsheet_id
+    try:
+        await spreadsheets_update_value(spreadsheet_id, projects, aiogoogle)
+    except Exception as error:
+        raise Exception(f"Произошла ошибка {error}")
+    return projects

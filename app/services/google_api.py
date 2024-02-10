@@ -1,3 +1,5 @@
+import copy
+
 from aiogoogle import Aiogoogle
 from datetime import datetime
 
@@ -32,18 +34,18 @@ TABLE_PATTERN = [
 ROW_COLUMN_COUNT_LIMIT_ERROR = ('Количество строк - {rows_value}, а'
                                 'столбцов - {columns_value}, превышает лимит'
                                 'количество строк не'
-                                'должно превышать {rowcount_limit}, '
-                                'a столбцов - {columncount_limit}')
+                                'должно превышать {SPREADSHEET_ROWCOUNT}, '
+                                'a столбцов - {SPREADSHEET_COLUMNCOUNT}')
 
 
 async def spreadsheets_create(aiogoogle: Aiogoogle) -> str:
     service = await aiogoogle.discover('sheets', 'v4')
-    spreadsheets_body = SPREADSHEET_BODY.copy()
+    spreadsheets_body = copy.deepcopy(SPREADSHEET_BODY)
     spreadsheets_body['properties']['title'] += datetime.now().strftime(FORMAT)
     response = await aiogoogle.as_service_account(
-        service.spreadsheets.create(json=SPREADSHEET_BODY)
+        service.spreadsheets.create(json=spreadsheets_body)
     )
-    return response['spreadsheetId']
+    return (response['spreadsheetId'], response.url)
 
 
 async def set_user_permissions(
@@ -68,7 +70,7 @@ async def spreadsheets_update_value(
         aiogoogle: Aiogoogle
 ) -> str:
     service = await aiogoogle.discover('sheets', 'v4')
-    table_values = TABLE_PATTERN.copy()
+    table_values = copy.deepcopy(TABLE_PATTERN)
     table_values[0].append(datetime.now().strftime(FORMAT))
     table_values = [*table_values,
                     *[list(map(str,
@@ -85,12 +87,10 @@ async def spreadsheets_update_value(
                         for items in table_values)
     rows_value = len(table_values)
     if (SPREADSHEET_ROWCOUNT < rows_value or
-            SPREADSHEET_COLUMNCOUNT < columns_value):
+        SPREADSHEET_COLUMNCOUNT < columns_value): # noqa
         raise ValueError(ROW_COLUMN_COUNT_LIMIT_ERROR.format(
             rows_value=rows_value,
-            columns_value=columns_value,
-            rowcount_limit=SPREADSHEET_ROWCOUNT,
-            columncount_limit=SPREADSHEET_COLUMNCOUNT))
+            columns_value=columns_value))
 
     await aiogoogle.as_service_account(
         service.spreadsheets.values.update(
