@@ -31,11 +31,13 @@ TABLE_PATTERN = [
     ['Топ проектов по скорости закрытия'],
     ['Название проекта', 'Время сбора', 'Описание']
 ]
-ROW_COLUMN_COUNT_LIMIT_ERROR = ('Количество строк - {rows_value}, а'
-                                'столбцов - {columns_value}, превышает лимит'
-                                'количество строк не'
-                                'должно превышать {SPREADSHEET_ROWCOUNT}, '
-                                'a столбцов - {SPREADSHEET_COLUMNCOUNT}')
+ROW_COLUMN_COUNT_LIMIT_ERROR = (
+    'Количество строк - {rows_value}, а'
+    'столбцов - {columns_value}, превышает лимит'
+    'количество строк не'
+    'должно превышать {SPREADSHEET_ROWCOUNT}, '
+    'a столбцов - {SPREADSHEET_COLUMNCOUNT}'
+)
 
 
 async def spreadsheets_create(aiogoogle: Aiogoogle) -> str:
@@ -86,8 +88,10 @@ async def spreadsheets_update_value(
     columns_value = max(len(items)
                         for items in table_values)
     rows_value = len(table_values)
-    if (SPREADSHEET_ROWCOUNT < rows_value or
-        SPREADSHEET_COLUMNCOUNT < columns_value): # noqa
+    if (
+        SPREADSHEET_ROWCOUNT < rows_value or
+        SPREADSHEET_COLUMNCOUNT < columns_value
+    ):
         raise ValueError(ROW_COLUMN_COUNT_LIMIT_ERROR.format(
             rows_value=rows_value,
             columns_value=columns_value))
@@ -100,4 +104,3 @@ async def spreadsheets_update_value(
             json=update_body
         )
     )
-    return spreadsheet_id

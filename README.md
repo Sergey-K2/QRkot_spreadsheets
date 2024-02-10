@@ -9,6 +9,8 @@
 Python
 FastAPI
 SQL Alchemy
+Google Sheets
+aiogoogle
 
 ## Как запустить проект:
 

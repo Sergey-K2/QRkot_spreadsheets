@@ -1,5 +1,6 @@
 from aiogoogle import Aiogoogle
 from fastapi import APIRouter, Depends
+from http import HTTPStatus
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import get_async_session
@@ -25,9 +26,9 @@ async def get_spreadsheet_report(
         session
     )
     spreadsheet_id = await spreadsheets_create(aiogoogle)
-    await set_user_permissions(spreadsheet_id, aiogoogle)
+    await set_user_permissions(spreadsheet_id[0], aiogoogle)
     try:
-        await spreadsheets_update_value(spreadsheet_id, projects, aiogoogle)
-    except Exception as error:
-        raise Exception(f"Произошла ошибка {error}")
-    return projects
+        await spreadsheets_update_value(spreadsheet_id[0], projects, aiogoogle)
+    except ValueError as error:
+        raise ValueError(f"Произошла ошибка {error}", HTTPStatus.BAD_REQUEST)
+    return spreadsheet_id[1] + spreadsheet_id[0]
