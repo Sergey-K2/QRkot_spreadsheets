@@ -1,5 +1,5 @@
 from aiogoogle import Aiogoogle
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from http import HTTPStatus
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,10 +12,6 @@ from app.services.google_api import (set_user_permissions,
                                      spreadsheets_update_value)
 
 router = APIRouter()
-
-
-class ValueException(BaseException):
-    pass
 
 
 @router.post(
@@ -34,7 +30,7 @@ async def get_spreadsheet_report(
     try:
         await spreadsheets_update_value(spreadsheet_id, projects, aiogoogle)
     except ValueError as error:
-        raise ValueException(
+        raise HTTPException(
             f"Произошла ошибка {error}", HTTPStatus.BAD_REQUEST
         )
-    return google_url + spreadsheet_id
+    return google_url
