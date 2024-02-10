@@ -47,7 +47,7 @@ async def spreadsheets_create(aiogoogle: Aiogoogle) -> str:
     response = await aiogoogle.as_service_account(
         service.spreadsheets.create(json=spreadsheets_body)
     )
-    return (response['spreadsheetId'], response.url)
+    return (response['spreadsheetId'], response['url'])
 
 
 async def set_user_permissions(
